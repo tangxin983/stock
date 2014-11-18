@@ -1,6 +1,7 @@
 package com.github.tx.stock.test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.csv.CSVRecord;
@@ -53,6 +54,7 @@ public class InitStockData extends MybatisTestUnit {
 				}
 				i++;
 			}
+			Collections.reverse(entitys);
 		}
 		return entitys;
 	}
