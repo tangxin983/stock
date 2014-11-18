@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.tx.stock.dao.StockMapper">
+
+	<update id="createTable">
+		CREATE TABLE IF NOT EXISTS ${tableName} (
+		id int(6) NOT NULL AUTO_INCREMENT,
+		date int(8) DEFAULT NULL,
+		high double DEFAULT NULL,
+		low double DEFAULT NULL,
+		open double DEFAULT NULL,
+		close double DEFAULT NULL,
+		adj_close double DEFAULT NULL,
+		volume bigint(20) DEFAULT NULL,
+		PRIMARY KEY (id)) ENGINE=InnoDB DEFAULT CHARSET=utf8
+	</update>
+	
+	<insert id="insertData" parameterType="Stock">
+		insert into ${tableName} (date, high, low, open, close, volume, adj_close)
+		values (#{date}, #{high}, #{low}, #{open}, #{close}, #{volume}, #{adjClose})
+	</insert>
+
+	<sql id="selectClause">
+		<where>
+			<foreach collection="condition.criterias" item="criteria"
+				separator="or">
+				<trim prefix="(" suffix=")" prefixOverrides="and">
+					<foreach collection="criteria.criterions" item="criterion">
+						<choose>
+							<when test="criterion.noValue">
+								and ${criterion.condition}
+							</when>
+							<when test="criterion.singleValue">
+								and ${criterion.condition} #{criterion.value}
+							</when>
+							<when test="criterion.betweenValue">
+								and ${criterion.condition} #{criterion.value} and
+								#{criterion.secondValue}
+							</when>
+							<when test="criterion.listValue">
+								and ${criterion.condition}
+								<foreach collection="criterion.value" item="listItem"
+									open="(" close=")" separator=",">
+									#{listItem}
+								</foreach>
+							</when>
+						</choose>
+					</foreach>
+				</trim>
+			</foreach>
+		</where>
+		<if test="condition.groupByColumns.size() > 0">
+			group by
+			<foreach collection="condition.groupByColumns" item="groupByColumn"
+				separator=",">
+				${groupByColumn}
+			</foreach>
+		</if>
+		<trim prefix="order by" prefixOverrides="desc|asc">
+			<foreach collection="condition.ascColumns" item="ascColumn"
+				separator=",">
+				${ascColumn} asc
+			</foreach>
+			<if
+				test="condition.ascColumns.size() > 0 and condition.descColumns.size() > 0">
+				,
+			</if>
+			<foreach collection="condition.descColumns" item="descColumn"
+				separator=",">
+				${descColumn} desc
+			</foreach>
+		</trim>
+	</sql>
+</mapper>

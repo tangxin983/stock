@@ -1,6 +1,7 @@
 package com.github.tx.stock.dao;
 
-import com.github.tx.mybatis.mapper.CrudMapper;
+import org.apache.ibatis.annotations.Param;
+
 import com.github.tx.stock.entity.Stock;
 
 /**
@@ -9,6 +10,9 @@ import com.github.tx.stock.entity.Stock;
  * @since 2014年10月22日
  */
 
-public interface StockMapper extends CrudMapper<Stock> {
-  
+public interface StockMapper {
+
+	public void createTable(@Param("tableName")String tableName);
+	
+	public void insertData(Stock stock);
 }

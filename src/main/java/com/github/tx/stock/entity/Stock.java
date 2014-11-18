@@ -1,9 +1,5 @@
 package com.github.tx.stock.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
@@ -12,26 +8,39 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @since 2014年10月22日
  */
 
-@Table(name = "sz000001")
 public class Stock {
 
-	@Id
+	private String tableName;
+
 	private Integer date;
 
-	@Column
 	private Double open;
 
-	@Column
 	private Double high;
 
-	@Column
 	private Double low;
 
-	@Column
 	private Double close;
 
-	@Column
+	private Double adjClose;
+
 	private Long volume;
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+	public Double getAdjClose() {
+		return adjClose;
+	}
+
+	public void setAdjClose(Double adjClose) {
+		this.adjClose = adjClose;
+	}
 
 	public Integer getDate() {
 		return date;

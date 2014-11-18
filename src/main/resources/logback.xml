@@ -25,7 +25,7 @@
 	</appender>
 
 	<!-- project default level -->
-	<logger name="com.github.tx.stock" level="DEBUG" />
+	<logger name="com.github.tx.stock" level="INFO" />
 
 	<root level="WARN">
 		<appender-ref ref="console" />
