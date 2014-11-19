@@ -19,6 +19,10 @@
 		insert into ${tableName} (date, high, low, open, close, volume, adj_close)
 		values (#{date}, #{high}, #{low}, #{open}, #{close}, #{volume}, #{adjClose})
 	</insert>
+	
+	<select id="select" resultType="Stock">
+		select * from ${tableName}
+	</select>
 
 	<sql id="selectClause">
 		<where>

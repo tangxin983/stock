@@ -1,4 +1,4 @@
-package com.github.tx.stock.test;
+package com.github.tx.stock.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

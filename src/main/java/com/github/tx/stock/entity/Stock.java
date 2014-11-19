@@ -14,6 +14,8 @@ public class Stock {
 
 	private Integer date;
 
+	private Integer id;
+
 	private Double open;
 
 	private Double high;
@@ -25,6 +27,14 @@ public class Stock {
 	private Double adjClose;
 
 	private Long volume;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public String getTableName() {
 		return tableName;
