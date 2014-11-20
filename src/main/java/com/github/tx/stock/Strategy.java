@@ -107,4 +107,67 @@ public abstract class Strategy {
 		Double ratio = NumberUtils.divide(minus, today.getClose(), 4);
 		return NumberUtils.multiply(ratio, 100);
 	}
+	
+	/**
+	 * 获取某天的MA-N值
+	 * @param entitys 实体列表
+	 * @param index 计算sma的基准日序号
+	 * @param n 平均N日
+	 * @return
+	 */
+	public Double sma(List<Stock> entitys, int index, int n) {
+		if (index < (n-1)) {
+			throw new IllegalArgumentException("index必须大等于n-1");
+		}
+		Double sumClose = 0d;
+		for (int i = 0; i < n; i++) {
+			Stock stock = entitys.get(index - i);
+			sumClose += stock.getClose();
+		}
+		return NumberUtils.divide(sumClose, n, 2);
+	}
+	
+	/**
+	 * 获取某天的MA-N值
+	 * @param entitys 实体列表
+	 * @param date 计算sma的基准日
+	 * @param n 平均N日
+	 * @return
+	 */
+	public Double smaByDate(List<Stock> entitys, int date, int n) {
+		List<Integer> dates = CollectionUtils.extractToList(entitys, "date", true);
+		if(dates.contains(date)){
+			throw new IllegalArgumentException("date:" + date + "不存在");
+		}
+		int index = dates.indexOf(date);
+		return sma(entitys, index, n);
+	}
+	
+	public Double mtrByDate(List<Stock> entitys, int date) {
+		List<Integer> dates = CollectionUtils.extractToList(entitys, "date", true);
+		if(!dates.contains(date)){
+			throw new IllegalArgumentException("date:" + date + "不存在");
+		}
+		int index = dates.indexOf(date);
+		Stock today = entitys.get(index);
+		Stock yesterday = entitys.get(index-1);
+		Double minus1 = NumberUtils.subtract(today.getHigh(), today.getLow());
+		Double minus2 = Math.abs(NumberUtils.subtract(yesterday.getClose(),today.getHigh()));
+		Double minus3 = Math.abs(NumberUtils.subtract(yesterday.getClose(),today.getLow()));
+		return Math.max(minus1, Math.max(minus2,minus3));
+	}
+	
+	public Double atrByDate(List<Stock> entitys, int date, int n) {
+		List<Integer> dates = CollectionUtils.extractToList(entitys, "date", true);
+		if(!dates.contains(date)){
+			throw new IllegalArgumentException("date:" + date + "不存在");
+		}
+		int index = dates.indexOf(date);
+		Double sum = 0d;
+		for (int i = 0; i < n; i++) {
+			Stock stock = entitys.get(index - i);
+			sum += mtrByDate(entitys, stock.getDate());
+		}
+		return NumberUtils.divide(sum, n, 2);
+	}
 }
