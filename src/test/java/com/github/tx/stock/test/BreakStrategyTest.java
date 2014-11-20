@@ -1,5 +1,7 @@
 package com.github.tx.stock.test;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.tx.stock.BreakStrategy;
+import com.github.tx.stock.util.SysUtil;
 
 /**
  * 
@@ -21,9 +24,20 @@ public class BreakStrategyTest extends AbstractJUnit4SpringContextTests {
 	@Autowired
 	BreakStrategy strategy;
 	
-	@Test
+//	@Test
 	public void test() {
-		strategy.buy();
+		List<String> stockList = SysUtil.getSymbolList();
+		if (stockList != null && stockList.size() > 0) {
+			for (String stock : stockList) {
+				strategy.buy(stock);
+			}
+		}
 	}
+	
+	@Test
+	public void testSingle() {
+		strategy.buy("sh600052");
+	}
+
 
 }

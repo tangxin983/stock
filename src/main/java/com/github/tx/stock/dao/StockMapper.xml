@@ -23,6 +23,16 @@
 	<select id="select" resultType="Stock">
 		select * from ${tableName}
 	</select>
+	
+	<select id="selectByCondition" resultType="Stock">
+		select * from ${tableName}
+		<include refid="selectClause" />
+	</select>
+	
+	<select id="getHighestClose" resultType="double">
+		select max(close) from ${tableName}
+		<include refid="selectClause" />
+	</select>
 
 	<sql id="selectClause">
 		<where>
