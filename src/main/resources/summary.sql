@@ -1,0 +1,13 @@
+CREATE TABLE `summary` (
+  `symbol` char(10) DEFAULT NULL,
+  `strategy` varchar(255) DEFAULT NULL,
+  `begin_date` int(8) DEFAULT NULL,
+  `end_date` int(8) DEFAULT NULL,
+  `hit` int(8) DEFAULT NULL,
+  `limit_times` int(8) DEFAULT NULL,
+  `spec1` double DEFAULT NULL,
+  `spec2` double DEFAULT NULL,
+  `spec3` double DEFAULT NULL,
+  `spec4` double DEFAULT NULL,
+  `spec5` double DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
