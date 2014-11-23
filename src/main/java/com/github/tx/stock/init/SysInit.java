@@ -44,7 +44,7 @@ public class SysInit {
 
 	private List<Stock> getStockEntitys(String symbol) {
 		List<Stock> entitys = new ArrayList<Stock>();
-		Iterable<CSVRecord> records = SysUtil.getCsvRecord(symbol, 30000);
+		Iterable<CSVRecord> records = SysUtil.getCsvRecord(symbol, 15000);
 		int i = 0;
 		if (records != null) {
 			for (CSVRecord record : records) {

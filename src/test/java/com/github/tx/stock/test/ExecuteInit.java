@@ -23,14 +23,14 @@ public class ExecuteInit extends AbstractJUnit4SpringContextTests {
 	@Autowired
 	SysInit init;
 
-	// @Test
+//	@Test
 	public void createTable() {
 		logger.info("begin init table");
 		init.createTable();
 		logger.info("end init table");
 	}
 
-	// @Test
+	 @Test
 	public void importAllData() {
 		List<String> symbols = SysUtil.getSymbolList();
 		int i = 1;
@@ -41,7 +41,7 @@ public class ExecuteInit extends AbstractJUnit4SpringContextTests {
 		}
 	}
 
-	@Test
+//	@Test
 	public void importData() {
 		init.importData("sz000001");
 	}
