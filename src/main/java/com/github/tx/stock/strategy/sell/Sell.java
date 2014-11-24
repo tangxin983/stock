@@ -38,4 +38,11 @@ public abstract class Sell {
 	 * @return
 	 */
 	public abstract int getSellDate();
+	
+	/**
+	 * 获取离市价格
+	 * 
+	 * @return
+	 */
+	public abstract double getSellPrice();
 }

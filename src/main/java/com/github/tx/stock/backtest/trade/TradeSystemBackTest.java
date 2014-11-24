@@ -17,7 +17,7 @@ import com.github.tx.stock.util.NumberUtils;
 public class TradeSystemBackTest extends BackTest {
 
 	@Autowired
-	@Qualifier("breakHighBuy")
+	@Qualifier("breakCloseBuy")
 	Buy buy;
 
 	@Autowired
@@ -45,13 +45,14 @@ public class TradeSystemBackTest extends BackTest {
 				int units = p.position(symbol, date, leftAmount, stock.getClose());// 头寸单位数
 				double pAmount = NumberUtils.multiply(stock.getClose(), units);// 买入金额（close x units）
 				leftAmount = NumberUtils.subtract(leftAmount, pAmount);
-				logger.debug("symbol:{},入市日期:{},单位:{},买入金额:{},余额:{}", symbol,
-						date, units, pAmount, leftAmount);
+				logger.debug("symbol:{},入市日期:{},单位:{},买入:{},买入金额:{},余额:{}", symbol,
+						date, units, stock.getClose(),pAmount, leftAmount);
 				double sellAmount = sell.sell(symbol, date, units);// 卖出金额
 				sellDate = sell.getSellDate();// 离市日期
 				leftAmount = NumberUtils.add(leftAmount, sellAmount);
-				logger.debug("symbol:{},离市日期:{},单位:{},卖出金额:{},余额:{}", symbol,
-						sellDate, units, sellAmount, leftAmount);
+				logger.debug("symbol:{},离市日期:{},单位:{},卖出:{},卖出金额:{},余额:{}", symbol,
+						sellDate, units, sell.getSellPrice(), sellAmount, leftAmount);
+				logger.debug("本次差额:{}", sellAmount - pAmount);
 			}
 			if(sellDate != 0){
 				index = dates.indexOf(sellDate);//卖完才能买

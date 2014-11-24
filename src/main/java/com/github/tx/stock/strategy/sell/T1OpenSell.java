@@ -17,6 +17,8 @@ import com.github.tx.stock.util.NumberUtils;
 public class T1OpenSell extends Sell {
 	
 	private int sellDate;
+	
+	private double sellPrice;
 
 	@Override
 	public double sell(String symbol, int date, int units) {
@@ -31,14 +33,20 @@ public class T1OpenSell extends Sell {
 			logger.debug("{}不是正常日期", date);
 			return 0;
 		}
-		sellDate = dates.get(index+1);//t+1
-		Stock stock = entitys.get(index+1);
+		Stock stock = entitys.get(index+1);//t+1
+		sellDate = stock.getDate();
+		sellPrice = stock.getOpen();
 		return NumberUtils.multiply(units, stock.getOpen());
 	}
 
 	@Override
 	public int getSellDate() {
 		return sellDate;
+	}
+
+	@Override
+	public double getSellPrice() {
+		return sellPrice;
 	}
 
 }
