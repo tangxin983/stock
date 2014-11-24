@@ -30,6 +30,18 @@ public class TechnicalIndicators {
 	public List<Stock> getSymbolData(String symbol) {
 		return service.getSymbolData(symbol);
 	}
+	
+	public Stock getSymbolData(String symbol, int date) {
+		List<Stock> entitys = service.getSymbolData(symbol);
+		if(entitys.size() == 0){
+			return null;
+		}
+		List<Integer> dates = getDates(symbol);
+		if(!dates.contains(date)){
+			return null;
+		}
+		return entitys.get(dates.indexOf(date));
+	}
 
 	/**
 	 * 获取所有的日期列表
