@@ -24,11 +24,14 @@ public abstract class Buy {
 	DbService service;
 	
 	/**
-	 * 判断是否可入市
+	 * 判断此日期是否可入市
 	 * @param symbol 代码
-	 * @param date 日期
+	 * @param date 测试日期
+	 * @param isFilterEnable 是否开启过滤器
 	 * @return
 	 */
-	public abstract boolean buy(String symbol, int date);
+	public abstract boolean buy(String symbol, int date, boolean isFilterEnable);
+	
+	public abstract double getBuyPrice();
 	
 }

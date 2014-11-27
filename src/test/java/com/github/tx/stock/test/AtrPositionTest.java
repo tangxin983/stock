@@ -24,6 +24,7 @@ public class AtrPositionTest {
 
 	@Test
 	public void test() {
+		position.position("sz000598", 20141124, 26000, 6.10);
 	}
 
 }

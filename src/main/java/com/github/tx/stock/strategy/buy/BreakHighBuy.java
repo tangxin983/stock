@@ -2,9 +2,11 @@ package com.github.tx.stock.strategy.buy;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.github.tx.stock.entity.Stock;
+import com.github.tx.stock.filter.Filter;
 
 /**
  * 
@@ -19,7 +21,17 @@ public class BreakHighBuy extends Buy {
 
 	private static final int RATIO = 2;
 
-	public boolean buy(String symbol, int date) {
+	private double buyPrice;
+
+	@Autowired
+	private Filter filter;
+
+	public boolean buy(String symbol, int date, boolean isFilterEnable) {
+		if (isFilterEnable) {
+			if (!filter.doFilter(symbol, date)) {
+				return false;
+			}
+		}
 		List<Stock> entitys = indicators.getSymbolData(symbol);
 		if (entitys.size() == 0) {
 			logger.debug("{}无数据", symbol);
@@ -40,6 +52,7 @@ public class BreakHighBuy extends Buy {
 		Double volumeRatio = indicators.volumeRatio(symbol, date);
 		Double changeRatio = indicators.changeRatio(symbol, date);
 		if (stock.getHigh() > highestHigh && volumeRatio >= RATIO) {
+			buyPrice = highestHigh;// 以之前的最高价入市
 			logger.debug(
 					"以{}为基准, change为{}, high为{}, vratio为{}, 前{}天的最高high为{}",
 					stock.getDate(), changeRatio, stock.getHigh(), volumeRatio,
@@ -47,6 +60,11 @@ public class BreakHighBuy extends Buy {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public double getBuyPrice() {
+		return buyPrice;
 	}
 
 }

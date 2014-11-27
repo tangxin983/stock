@@ -30,14 +30,14 @@ public class TechnicalIndicators {
 	public List<Stock> getSymbolData(String symbol) {
 		return service.getSymbolData(symbol);
 	}
-	
+
 	public Stock getSymbolData(String symbol, int date) {
 		List<Stock> entitys = service.getSymbolData(symbol);
-		if(entitys.size() == 0){
+		if (entitys.size() == 0) {
 			return null;
 		}
 		List<Integer> dates = getDates(symbol);
-		if(!dates.contains(date)){
+		if (!dates.contains(date)) {
 			return null;
 		}
 		return entitys.get(dates.indexOf(date));
@@ -160,12 +160,13 @@ public class TechnicalIndicators {
 		}
 		Stock today = entitys.get(index);
 		Stock yesterday = entitys.get(index - 1);
-		Double minus = NumberUtils.subtract(today.getClose(), yesterday.getClose());
+		Double minus = NumberUtils.subtract(today.getClose(),
+				yesterday.getClose());
 		return NumberUtils.percent(minus, yesterday.getClose(), 2);
 	}
 
 	/**
-	 * 基准日N天后的涨幅
+	 * 基准日N天后的涨幅(按close算)
 	 * 
 	 * @param symbol
 	 *            代码
@@ -187,7 +188,8 @@ public class TechnicalIndicators {
 		}
 		Stock today = entitys.get(index);
 		Stock afterNday = entitys.get(index + n);
-		Double minus = NumberUtils.subtract(afterNday.getClose(), today.getClose());
+		Double minus = NumberUtils.subtract(afterNday.getClose(),
+				today.getClose());
 		return NumberUtils.percent(minus, today.getClose(), 2);
 	}
 
@@ -276,4 +278,84 @@ public class TechnicalIndicators {
 		return Math.max(minus1, Math.max(minus2, minus3));
 	}
 
+	/**
+	 * 最大有利变动幅度
+	 * 
+	 * @param symbol
+	 *            代码
+	 * @param date
+	 *            入市日期
+	 * @param n
+	 * @param price
+	 *            入市价格
+	 * @return
+	 */
+	public Double mfe(String symbol, int date, int n, double price) {
+		List<Stock> entitys = service.getSymbolData(symbol);
+		List<Integer> dates = getDates(symbol);
+		if (!dates.contains(date)) {
+			throw new IllegalArgumentException("日期" + date + "不存在");
+		}
+		int index = dates.indexOf(date);
+		if (index + n >= entitys.size()) {
+			throw new IllegalArgumentException("mtr:index+n必须小于size");
+		}
+		// 计算包含入市日期在内N天后的最高价
+		List<Stock> sub = entitys.subList(index, index + n);
+		List<Double> highs = CollectionUtils.extractToList(sub, "high", true);
+		double highest = Collections.max(highs);
+		return NumberUtils.subtract(highest, price);// 最大有利变动幅度=最高价-入市价
+	}
+
+	/**
+	 * 最大不利变动幅度
+	 * 
+	 * @param symbol
+	 *            代码
+	 * @param date
+	 *            入市日期
+	 * @param n
+	 * @param price
+	 *            入市价格
+	 * @return
+	 */
+	public Double mae(String symbol, int date, int n, double price) {
+		List<Stock> entitys = service.getSymbolData(symbol);
+		List<Integer> dates = getDates(symbol);
+		if (!dates.contains(date)) {
+			throw new IllegalArgumentException("日期" + date + "不存在");
+		}
+		int index = dates.indexOf(date);
+		if (index + n >= entitys.size()) {
+			throw new IllegalArgumentException("mtr:index+n必须小于size");
+		}
+		// 计算包含入市日期在内N天后的最低价
+		List<Stock> sub = entitys.subList(index, index + n + 1);
+		List<Double> lows = CollectionUtils.extractToList(sub, "low", true);
+		double lowest = Collections.min(lows);
+		return NumberUtils.subtract(price, lowest);// 最大不利变动幅度=入市价-最低价
+	}
+
+	/**
+	 * 计算E-比率
+	 * @param symbol 代码
+	 * @param dateAndPrice 命中日期和买入价格
+	 * @param n E-n比率
+	 * @param price 价格
+	 * @return
+	 */
+	public Double e_ratio(String symbol, Map<Integer, Double> dateAndPrice, int n) {
+		double mfe_sum = 0d;
+		double mae_sum = 0d;
+		for (int date : dateAndPrice.keySet()) {
+			double mfe = mfe(symbol, date, n, dateAndPrice.get(date));
+			double mae = mae(symbol, date, n, dateAndPrice.get(date));
+			double atr = atr(symbol, date, 14);
+			mfe_sum += NumberUtils.divide(mfe, atr, 2);
+			mae_sum += NumberUtils.divide(mae, atr, 2);
+		}
+		double mfe_avg = NumberUtils.divide(mfe_sum, dateAndPrice.keySet().size(), 2);
+		double mae_avg = NumberUtils.divide(mae_sum, dateAndPrice.keySet().size(), 2);
+		return NumberUtils.divide(mfe_avg, mae_avg, 2);
+	}
 }

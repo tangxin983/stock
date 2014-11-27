@@ -11,7 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.github.tx.stock.backtest.buy.BreakCloseBuyBackTest;
+import com.github.tx.stock.backtest.buy.BuyBackTest;
 import com.github.tx.stock.util.SysUtil;
 
 /**
@@ -27,9 +27,9 @@ public class ExecuteBuyBackTest extends AbstractJUnit4SpringContextTests {
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	BreakCloseBuyBackTest backTest;
+	BuyBackTest backTest;
 
-	private static final int BEGIN_DATE = 20110101;// 起始回测日
+	private static final int BEGIN_DATE = 20010123;// 起始回测日
 
 	private static final int END_DATE = 20141111;// 结束回测日
 
@@ -44,7 +44,7 @@ public class ExecuteBuyBackTest extends AbstractJUnit4SpringContextTests {
 
 	@Test
 	public void testSingle() {
-		String symbol = "sh600052";
+		String symbol = "sh600006";
 		backTest.backTest(symbol, BEGIN_DATE, END_DATE);
 	}
 

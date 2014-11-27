@@ -18,9 +18,11 @@ public class BreakCloseBuy extends Buy {
 	private static final int BREAK_DAYS = 20;
 
 	private static final int RATIO = 2;
-
+	
+	private double buyPrice;
+	
 	@Override
-	public boolean buy(String symbol, int date) {
+	public boolean buy(String symbol, int date, boolean isFilterEnable) {
 		List<Stock> entitys = indicators.getSymbolData(symbol);
 		if (entitys.size() == 0) {
 			logger.debug("{}无数据", symbol);
@@ -41,6 +43,7 @@ public class BreakCloseBuy extends Buy {
 		Double volumeRatio = indicators.volumeRatio(symbol, date);
 		Double changeRatio = indicators.changeRatio(symbol, date);
 		if (stock.getClose() > highestClose && volumeRatio >= RATIO) {
+			buyPrice = stock.getClose();
 			logger.debug(
 					"以{}为基准, change为{}, close为{}, vratio为{}, 前{}天的最高close为{}",
 					stock.getDate(), changeRatio, stock.getClose(), volumeRatio,
@@ -49,6 +52,11 @@ public class BreakCloseBuy extends Buy {
 		}
 		return false;
 	
+	}
+
+	@Override
+	public double getBuyPrice() {
+		return buyPrice;
 	}
 
 }
