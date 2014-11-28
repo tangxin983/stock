@@ -40,7 +40,7 @@ public class TradeSystemBackTest extends BackTest {
 		double leftAmount = capital;// 剩余金额
 		while (date <= endDate) {
 			int sellDate = 0;
-			if (buy.buy(symbol, date, true)) {// 入市
+			if (buy.makeDecision(symbol, date)) {// 入市
 				Stock stock = entitys.get(index);
 				int units = p.position(symbol, date, leftAmount, stock.getClose());// 头寸单位数
 				double pAmount = NumberUtils.multiply(stock.getClose(), units);// 买入金额（close x units）

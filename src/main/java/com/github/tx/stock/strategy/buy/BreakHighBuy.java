@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.github.tx.stock.entity.Stock;
-import com.github.tx.stock.filter.Filter;
+import com.github.tx.stock.filter.BreakoutHighFilter;
+import com.github.tx.stock.filter.MaLongFilter;
+import com.github.tx.stock.filter.VolumeFilter;
 
 /**
  * 
@@ -17,21 +19,18 @@ import com.github.tx.stock.filter.Filter;
 @Component
 public class BreakHighBuy extends Buy {
 
-	private static final int BREAK_DAYS = 20;
-
-	private static final int RATIO = 2;
-
-	private double buyPrice;
+	private double price;
 
 	@Autowired
-	private Filter filter;
-
-	public boolean buy(String symbol, int date, boolean isFilterEnable) {
-		if (isFilterEnable) {
-			if (!filter.doFilter(symbol, date)) {
-				return false;
-			}
-		}
+	private MaLongFilter maLongFilter;
+	
+	@Autowired
+	private BreakoutHighFilter breakoutHighFilter;
+	
+	@Autowired
+	private VolumeFilter volumeFilter;
+	
+	public boolean makeDecision(String symbol, int date) {
 		List<Stock> entitys = indicators.getSymbolData(symbol);
 		if (entitys.size() == 0) {
 			logger.debug("{}无数据", symbol);
@@ -40,31 +39,26 @@ public class BreakHighBuy extends Buy {
 		List<Integer> dates = indicators.getDates(symbol);
 		int index = dates.indexOf(date);
 		if (index == -1) {
-			logger.debug("{}不是正常日期", date);
+			logger.debug("日期{}不存在", date);
 			return false;
 		}
-		if (index < BREAK_DAYS) {
-			logger.debug("{}的回测日太早，需推后", symbol);
+		if(!maLongFilter.doFilter(symbol, date)){
 			return false;
 		}
-		Stock stock = entitys.get(index);
-		Double highestHigh = indicators.highestHigh(symbol, date, BREAK_DAYS);
-		Double volumeRatio = indicators.volumeRatio(symbol, date);
-		Double changeRatio = indicators.changeRatio(symbol, date);
-		if (stock.getHigh() > highestHigh && volumeRatio >= RATIO) {
-			buyPrice = highestHigh;// 以之前的最高价入市
-			logger.debug(
-					"以{}为基准, change为{}, high为{}, vratio为{}, 前{}天的最高high为{}",
-					stock.getDate(), changeRatio, stock.getHigh(), volumeRatio,
-					BREAK_DAYS, highestHigh);
-			return true;
+//		if(!volumeFilter.doFilter(symbol, date)){
+//			return false;
+//		}
+		if(!breakoutHighFilter.doFilter(symbol, date)){
+			return false;
 		}
-		return false;
+		price = indicators.highestHigh(symbol, date, BreakoutHighFilter.BREAK_DAYS);
+		logger.debug("{}入市, 价格{}", date, price);
+		return true;
 	}
 
 	@Override
-	public double getBuyPrice() {
-		return buyPrice;
+	public double getPrice(String symbol, int date) {
+		return price;
 	}
 
 }

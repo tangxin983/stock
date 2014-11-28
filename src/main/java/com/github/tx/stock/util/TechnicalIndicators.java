@@ -86,7 +86,7 @@ public class TechnicalIndicators {
 	}
 
 	/**
-	 * 最近N天最高价
+	 * 之前N天最高价(不包括当天)
 	 * 
 	 * @param symbol
 	 *            代码

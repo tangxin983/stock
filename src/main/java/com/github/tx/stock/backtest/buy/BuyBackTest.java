@@ -34,9 +34,9 @@ public class BuyBackTest extends BackTest {
 		// date -> price
 		Map<Integer, Double> dateAndPrice = new HashMap<Integer, Double>();
 		while (date <= endDate) {
-			if (buy.buy(symbol, date, true)) {
+			if (buy.makeDecision(symbol, date)) {
 				if (entitys.size() - index > 50) {// 当前index后必须有够做测试的天数否则不计入
-					dateAndPrice.put(date, buy.getBuyPrice());
+					dateAndPrice.put(date, buy.getPrice(symbol, date));
 				}
 			}
 			index++;

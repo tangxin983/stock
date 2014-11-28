@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.tx.stock.service.DbService;
 import com.github.tx.stock.util.TechnicalIndicators;
 
 /** 
@@ -20,18 +19,20 @@ public abstract class Buy {
 	@Autowired
 	TechnicalIndicators indicators;
 	
-	@Autowired
-	DbService service;
-	
 	/**
-	 * 判断此日期是否可入市
+	 * 获取入市价格
 	 * @param symbol 代码
-	 * @param date 测试日期
-	 * @param isFilterEnable 是否开启过滤器
+	 * @param date 日期
 	 * @return
 	 */
-	public abstract boolean buy(String symbol, int date, boolean isFilterEnable);
+	public abstract double getPrice(String symbol, int date);
 	
-	public abstract double getBuyPrice();
+	/**
+	 * 入市决策
+	 * @param symbol 代码
+	 * @param date 日期
+	 * @return
+	 */
+	public abstract boolean makeDecision(String symbol, int date);
 	
 }
