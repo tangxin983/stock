@@ -47,8 +47,6 @@ public class BuyBackTest extends BackTest {
 		}
 		if(!dateAndPrice.isEmpty()){
 			calculateEratio(symbol, beginDate, endDate, dateAndPrice);
-		}else{
-			logger.info("{} no hit", symbol);
 		}
 	}
 
