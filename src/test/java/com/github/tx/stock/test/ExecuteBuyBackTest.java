@@ -33,16 +33,17 @@ public class ExecuteBuyBackTest extends AbstractJUnit4SpringContextTests {
 
 	private static final int END_DATE = 20141111;// 结束回测日
 
-	// @Test
+	@Test
 	public void test() {
-		List<String> stockList = SysUtil.getSymbolList();
-		if (stockList != null && stockList.size() > 0) {
-			for (String stock : stockList) {
+		List<String> symbolList = SysUtil.getSymbolList();
+		if (symbolList != null && symbolList.size() > 0) {
+			for (String symbol : symbolList) {
+				backTest.backTest(symbol, BEGIN_DATE, END_DATE);
 			}
 		}
 	}
 
-	@Test
+	// @Test
 	public void testSingle() {
 		String symbol = "sh600006";
 		backTest.backTest(symbol, BEGIN_DATE, END_DATE);

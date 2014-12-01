@@ -192,6 +192,28 @@ public class TechnicalIndicators {
 				today.getClose());
 		return NumberUtils.percent(minus, today.getClose(), 2);
 	}
+	
+	/**
+	 * 2个日期间的涨幅(按close算)date2比date1晚
+	 * @param symbol 代码
+	 * @param date1 日期1
+	 * @param date2 日期2
+	 * @return (日期2-日期1)/日期1
+	 */
+	public Double changeRatioBetweenTwoday(String symbol, int date1, int date2) {
+		List<Stock> entitys = service.getSymbolData(symbol);
+		List<Integer> dates = getDates(symbol);
+		if (!dates.contains(date1) || !dates.contains(date2)) {
+			throw new IllegalArgumentException("日期不存在");
+		}
+		int index1 = dates.indexOf(date1);
+		int index2 = dates.indexOf(date2);
+		Stock stock1 = entitys.get(index1);
+		Stock stock2 = entitys.get(index2);
+		Double minus = NumberUtils.subtract(stock2.getClose(),
+				stock1.getClose());
+		return NumberUtils.percent(minus, stock1.getClose(), 2);
+	}
 
 	/**
 	 * 简单移动平均值
@@ -341,7 +363,6 @@ public class TechnicalIndicators {
 	 * @param symbol 代码
 	 * @param dateAndPrice 命中日期和买入价格
 	 * @param n E-n比率
-	 * @param price 价格
 	 * @return
 	 */
 	public Double e_ratio(String symbol, Map<Integer, Double> dateAndPrice, int n) {
@@ -357,5 +378,11 @@ public class TechnicalIndicators {
 		double mfe_avg = NumberUtils.divide(mfe_sum, dateAndPrice.keySet().size(), 2);
 		double mae_avg = NumberUtils.divide(mae_sum, dateAndPrice.keySet().size(), 2);
 		return NumberUtils.divide(mfe_avg, mae_avg, 2);
+	}
+	
+	
+	public boolean increaseAmount(String symbol, int date, int n, double amount){
+		double changeRatio = changeRatioAfterNday(symbol, date, n);
+		return changeRatio >= amount;
 	}
 }
